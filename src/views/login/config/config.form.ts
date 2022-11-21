@@ -5,7 +5,7 @@ export const formConfig: IFormConfig = {
     {
       label: '用户名',
       type: 'input',
-      field: 'name',
+      field: 'username',
       placeholder: '请输入用户名',
       size: 'large',
       rules: [

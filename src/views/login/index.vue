@@ -1,64 +1,36 @@
 <template>
   <div class="h-100% flex items-center justify-center">
-    <div class="b-1px b-#ccc b-rd-14px box-border w-500px p-40px">
-      <h2 class="mb-30px text-center">{{ globalConfig.title }}</h2>
-      <el-form :model="loginForm" :rules="rules" size="large" ref="loginRuleFormRef">
-        <el-form-item prop="username">
-          <el-input v-model="loginForm.username" />
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input v-model="loginForm.password" show-password />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            class="w-100%"
-            size="large"
-            @click="handleLogin"
-          >
-            立即登录
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SyCard :show-header="false" class="w-500px text-center p-40px">
+      <h2 class="text-28px m-0 mb-30px">后台管理系统</h2>
+      <SyForm
+        v-bind="formConfig"
+        v-model="formState"
+        :footerOptions="{ show: false }"
+        ref="loginFormRef"
+      />
+      <el-button class="w-100%" size="large" type="primary" @click="onSubmmit" :loading="loading">
+        登录
+      </el-button>
+    </SyCard>
   </div>
 </template>
 
-<script setup lang="ts" name="login">
-import type { FormInstance, FormRules } from 'element-plus';
+<script setup lang="ts" name="register">
+import { SyCard, SyForm } from '@/baseUI';
 import { IAccount } from '@/service/types/user';
-import { globalConfig } from '@/config';
 import { useStore } from '@/store';
-
-const rules = reactive<FormRules>({
-  username: [
-    {
-      required: true,
-      message: '请输入账号',
-      trigger: 'blur'
-    },
-    { min: 2, max: 5, message: '2-5', trigger: 'blur' }
-  ],
-  password: [
-    {
-      required: true,
-      message: '请输入密码',
-      trigger: 'blur'
-    }
-  ]
-});
-const store = useStore();
-const loading = ref(false);
-const loginForm = ref<IAccount>({
+import { formConfig } from './config/config.form';
+const formState = ref<IAccount>({
   username: '',
   password: ''
 });
-const loginRuleFormRef = ref<FormInstance>();
-const handleLogin = async () => {
-  await loginRuleFormRef.value?.validate();
+const store = useStore();
+const loading = ref(false);
+const loginFormRef = ref<InstanceType<typeof SyForm>>();
+const onSubmmit = async () => {
+  await loginFormRef.value?.formRef.validate();
   loading.value = true;
-  await store.user.loginAction(loginForm.value);
+  await store.user.loginAction(formState.value);
   loading.value = false;
 };
 </script>
