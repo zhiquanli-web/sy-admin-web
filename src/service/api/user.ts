@@ -5,6 +5,15 @@ import { IDataModel } from '@/service/types/axios';
 import { IAccount, ILoginResult } from '@/service/types/user';
 import { User } from '.';
 
+// 注册
+export function register(data: IAccount) {
+  return Request.request({
+    url: User.USER,
+    method: 'post',
+    data
+  });
+}
+
 // 登录
 export function login(data: IAccount) {
   return Request.request<IDataModel<ILoginResult>>({

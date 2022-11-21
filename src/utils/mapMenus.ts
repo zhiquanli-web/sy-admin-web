@@ -3,7 +3,7 @@ import { useStore } from '@/store';
 
 import { RouteRecord } from 'vue-router';
 
-export async function mapMenusToRoutes(userMenus: any[]): Promise<RouteRecord[]> {
+export async function mapMenusToRoutes(): Promise<RouteRecord[]> {
   const routes: any[] = [];
   // 加载所有菜单路由
   const allRoutes: RouteRecord[] = [];
@@ -13,25 +13,25 @@ export async function mapMenusToRoutes(userMenus: any[]): Promise<RouteRecord[]>
     allRoutes.push(...route.default);
   }
   // 根据权限菜单获取routes
-  const _filterPermissionRoutes = (routes: any[]) => {
-    if (!routes || routes.length === 0 || !userMenus || userMenus.length === 0) return [];
-    const routeList = routes.filter((route) => {
-      let curRoute: any = {};
-      userMenus.forEach((menu) => {
-        if (menu.path === route.path) {
-          curRoute = route;
-          if (route.children && route.children.length > 0) {
-            route.children = _filterPermissionRoutes(route.children);
-          }
-        }
-      });
-      if (Object.keys(curRoute).length > 0) return true;
-    });
-    return routeList;
-  };
-  const permissionRoutes: any[] = _filterPermissionRoutes(allRoutes);
+  // const _filterPermissionRoutes = (routes: any[]) => {
+  //   if (!routes || routes.length === 0 || !userMenus || userMenus.length === 0) return [];
+  //   const routeList = routes.filter((route) => {
+  //     let curRoute: any = {};
+  //     userMenus.forEach((menu) => {
+  //       if (menu.path === route.path) {
+  //         curRoute = route;
+  //         if (route.children && route.children.length > 0) {
+  //           route.children = _filterPermissionRoutes(route.children);
+  //         }
+  //       }
+  //     });
+  //     if (Object.keys(curRoute).length > 0) return true;
+  //   });
+  //   return routeList;
+  // };
+  // const permissionRoutes: any[] = _filterPermissionRoutes(allRoutes);
   // 静态路由(白名单路由) 与 权限路由 集合
-  Object.assign(routes, [...mainStaticRoute, ...permissionRoutes]);
+  Object.assign(routes, [...mainStaticRoute, ...allRoutes]);
   routes.sort((a, b) => a.meta.sort - b.meta.sort);
   if (routes && routes.length > 0) {
     const store = useStore();

@@ -1,12 +1,12 @@
 import type { PropType } from 'vue';
+import type { RouteRecord } from 'vue-router';
 import { defineStore } from 'pinia';
 import { tokenKey } from '@/common';
-import { login, getUserMenu, getUserInfo } from '@/service/api/user';
+import { login, getUserInfo } from '@/service/api/user';
 import { IAccount } from '@/service/types/user';
 import localCache from '@/utils/localCache';
 import router from '@/router';
 import { mapMenusToRoutes } from '@/utils/mapMenus';
-import { RouteRecord } from 'vue-router';
 
 const useUserStore = defineStore('user', {
   state: () => {
@@ -22,12 +22,13 @@ const useUserStore = defineStore('user', {
       try {
         const {
           code,
-          data: { token }
+          data: { token },
+          message
         } = await login(params);
         if (code === 0) {
           localCache.setCatch(tokenKey, token);
           this.token = token;
-          await this.changeUserInfo();
+          // await this.changeUserInfo();
           await this.changeUserMenus();
           router.push('/');
         }
@@ -37,8 +38,8 @@ const useUserStore = defineStore('user', {
     },
     async changeUserMenus() {
       try {
-        const menus = await getUserMenu();
-        const routes = await mapMenusToRoutes(menus.data);
+        // const menus = await getUserMenu();
+        const routes = await mapMenusToRoutes();
         this.userMenus = routes as any[];
         routes.length > 0 &&
           routes.forEach((route: any) => {
@@ -62,7 +63,7 @@ const useUserStore = defineStore('user', {
       const token = localCache.getCache(tokenKey);
       if (!token) return;
       await this.changeUserMenus();
-      await this.changeUserInfo();
+      // await this.changeUserInfo();
     }
   }
 });

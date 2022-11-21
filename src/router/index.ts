@@ -38,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue')
   },
   {
+    path: '/register',
+    name: 'register',
+    component: () => import(/* webpackChunkName: "register" */ '@/views/login/register.vue')
+  },
+  {
     path: '/:pathMatch(.*)',
     name: '404',
     component: () => import('@/views/404.vue')

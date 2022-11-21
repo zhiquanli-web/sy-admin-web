@@ -38,7 +38,7 @@ const rules = reactive<FormRules>({
       message: '请输入账号',
       trigger: 'blur'
     },
-    { min: 3, max: 5, message: '3-5', trigger: 'blur' }
+    { min: 2, max: 5, message: '2-5', trigger: 'blur' }
   ],
   password: [
     {
