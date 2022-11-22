@@ -8,7 +8,7 @@
     <el-dropdown class="flex items-center right-action-info" @command="handleCommand">
       <span class="flex items-center cursor">
         <el-avatar icon="UserFilled" :size="34" />
-        <span class="ml-10px c-#000">超级管理员</span>
+        <span class="ml-10px c-#000">{{ userInfo.username }}</span>
       </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -22,12 +22,15 @@
 
 <script setup lang="ts">
 import { useConfirm } from '@/hooks';
+import { useStore } from '@/store';
 import localCache from '@/utils/localCache';
 
 const props = defineProps<{ isCollapse: boolean }>();
 const emit = defineEmits(['update:isCollapse']);
 
 const router = useRouter();
+const store = useStore();
+const userInfo = computed(() => store.user.userInfo);
 const confirm = useConfirm();
 const handleCommand = async (key: string) => {
   if (key === 'logout') {

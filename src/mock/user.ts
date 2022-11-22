@@ -44,6 +44,7 @@ const useMenuData = [
 
 export default [
   {
+    // 登录
     url: `/api${User.LOGIN}`,
     method: 'post',
     response: ({ body }: any) => {
@@ -56,6 +57,7 @@ export default [
     }
   },
   {
+    // 获取用户信息
     url: `/api${User.USER}`,
     method: 'get',
     response: () => {
@@ -68,6 +70,20 @@ export default [
     }
   },
   {
+    // 注册
+    url: `/api${User.USER}`,
+    method: 'post',
+    response: () => {
+      console.log(`GET::${User.USER}`);
+      return {
+        code: 0,
+        data: '注册成功',
+        message: 'success'
+      };
+    }
+  },
+  {
+    // 获取菜单数据
     url: `/api${User.USEMENU}`,
     method: 'get',
     response: () => {

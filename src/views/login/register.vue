@@ -23,7 +23,6 @@ import { SyCard, SyForm } from '@/baseUI';
 import { useMessage } from '@/hooks';
 import { register } from '@/service/api/user';
 import { IAccount } from '@/service/types/user';
-import { tr } from 'element-plus/es/locale';
 import { formConfig } from './config/config.form';
 const { success, error } = useMessage();
 const router = useRouter();

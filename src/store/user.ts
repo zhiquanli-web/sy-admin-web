@@ -28,7 +28,7 @@ const useUserStore = defineStore('user', {
         if (code === 0) {
           localCache.setCatch(tokenKey, token);
           this.token = token;
-          // await this.changeUserInfo();
+          await this.changeUserInfo();
           await this.changeUserMenus();
           router.push('/');
         }
@@ -63,7 +63,7 @@ const useUserStore = defineStore('user', {
       const token = localCache.getCache(tokenKey);
       if (!token) return;
       await this.changeUserMenus();
-      // await this.changeUserInfo();
+      await this.changeUserInfo();
     }
   }
 });
