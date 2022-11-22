@@ -18,6 +18,22 @@ const Request = new IRequest({
       }
       return config;
     },
+    responseInterceptor: (res) => {
+      if (res.data.code === 1001) {
+        const { error } = useMessage();
+        error('登录超时，请重新登录');
+        localCache.clearCache();
+        let timer: any = null;
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        timer = setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+      return res;
+    },
     responseInterceptorCatch: (res) => {
       const { error } = useMessage();
       error(res.response.data.data || '请求错误');
