@@ -6,5 +6,5 @@ export interface IPagination {
 
 export interface ITableList {
   list: any[];
-  page: IPagination;
+  count: number;
 }

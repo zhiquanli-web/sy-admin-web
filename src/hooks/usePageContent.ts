@@ -22,8 +22,9 @@ interface ITableState {
 export default function usePageContent(config: ITableConfig, pageQuery: any = {}) {
   const { url, showFooter, columns } = config;
   const confirm = useConfirm();
-  const { success, error } = useMessage();
-  const pageInfo = reactive<IPage>({ currentPage: 1, pageSize: 10, total: 0 });
+  const { success } = useMessage();
+  const pageInfo = reactive<IPage>({ currentPage: 1, pageSize: 10 });
+  const total = ref(0);
   const dataSource = ref<any[]>([]);
   watch(pageInfo, () => getPageData());
 
@@ -44,7 +45,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
    */
   const getPageData = async (query?: any) => {
     query = query ?? {};
-    let params: any = {
+    let params: unknown = {
       ...pageQuery,
       pageNo: pageInfo.currentPage,
       pageSize: pageInfo.pageSize,
@@ -62,12 +63,12 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
         params
       });
       const {
-        data: { list, page }
+        data: { list, count }
       } = res;
       dataSource.value = list;
-      pageInfo.total = page.count;
+      total.value = count;
     } catch (err) {
-      error('获取数据失败，请刷新重试');
+      // console.log(err);
     }
   };
   // 改变页码
@@ -88,7 +89,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
       success('操作成功');
       refresh();
     } catch (err) {
-      error('操作失败，请稍后再试');
+      // console.log(err);
     }
   };
   // 新增
@@ -101,7 +102,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
       success('添加成功');
       refresh();
     } catch (err) {
-      error('添加失败，请稍后再试');
+      // console.log(err);
     }
   };
   // 删除
@@ -118,7 +119,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
           });
           success('删除成功');
         } catch (err) {
-          error('删除失败，请稍后再试');
+          // console.log(err);
         }
         refresh();
       })
@@ -133,6 +134,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
     pageInfo,
     dataSource,
     tableState,
+    total,
     getPageData,
     refresh,
     currentChange,

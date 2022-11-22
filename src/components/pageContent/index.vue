@@ -5,7 +5,11 @@
     </template>
     <template #right>
       <div class="flex items-center">
-        <el-button v-if="tableConfig.handlerOption?.showCreated" @click="handleToCreate">
+        <el-button
+          v-if="tableConfig.handlerOption?.showCreated"
+          type="primary"
+          @click="handleToCreate"
+        >
           <i class="i-ep-plus mr-4px"></i>
           新增
         </el-button>
@@ -27,7 +31,7 @@
       :columns="tableState.columns"
       :data="dataSource"
       :options="options"
-      :page-options="pageInfo"
+      :page-options="{ ...pageInfo, total }"
       v-bind="originTableConfig"
       @current-change="currentChange"
       @size-change="sizeChange"
@@ -75,6 +79,7 @@ const {
   pageInfo,
   dataSource,
   tableState,
+  total,
   getPageData,
   refresh,
   currentChange,
