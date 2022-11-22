@@ -8,21 +8,47 @@
         :footerOptions="{ show: false }"
         ref="registerFormRef"
       />
-      <el-button class="w-100%" size="large" type="primary" @click="onSubmmit">注册</el-button>
+      <el-button class="w-100%" size="large" type="primary" @click="onSubmmit" :loading="loading">
+        注册
+      </el-button>
+      <div class="mt-10px text-right">
+        <el-link type="primary" @click="handleToLogin">返回登录</el-link>
+      </div>
     </SyCard>
   </div>
 </template>
 
 <script setup lang="ts" name="register">
 import { SyCard, SyForm } from '@/baseUI';
-import { useStore } from '@/store';
+import { useMessage } from '@/hooks';
+import { register } from '@/service/api/user';
+import { IAccount } from '@/service/types/user';
+import { tr } from 'element-plus/es/locale';
 import { formConfig } from './config/config.form';
-const formState = ref({});
-const store = useStore();
+const { success, error } = useMessage();
+const router = useRouter();
+const loading = ref(false);
+const formState = ref<IAccount>({
+  username: '',
+  password: ''
+});
 const registerFormRef = ref<InstanceType<typeof SyForm>>();
 const onSubmmit = async () => {
   await registerFormRef.value?.formRef.validate();
-  console.log(1111);
+  loading.value = true;
+  const { code, data } = await register({ ...formState.value });
+  if (code === 0) {
+    success('注册成功');
+    setTimeout(() => {
+      router.push({ path: '/login' });
+    }, 1500);
+  } else {
+    error(data || '注册失败, 请稍后再试');
+  }
+  loading.value = false;
+};
+const handleToLogin = () => {
+  router.replace({ path: '/login' });
 };
 </script>
 

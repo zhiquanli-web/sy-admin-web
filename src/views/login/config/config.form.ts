@@ -26,3 +26,30 @@ export const formConfig: IFormConfig = {
     }
   ]
 };
+
+export const loginFormConfig: IFormConfig = {
+  formItems: [
+    {
+      labelWidth: '0',
+      type: 'input',
+      field: 'username',
+      placeholder: '请输入用户名',
+      size: 'large',
+      rules: [
+        { required: true, message: '请输入用户名' },
+        { min: 2, max: 20, message: '用户名长度为2-20位字符' }
+      ]
+    },
+    {
+      labelWidth: '0',
+      type: 'password',
+      field: 'password',
+      placeholder: '请输入用户密码',
+      size: 'large',
+      rules: [
+        { required: true, message: '请输入用户密码' },
+        { min: 6, max: 12, message: '用户名长度为6-12位字符' }
+      ]
+    }
+  ]
+};

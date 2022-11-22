@@ -6,7 +6,7 @@ import { IAccount, ILoginResult } from '@/service/types/user';
 import { User } from '.';
 
 // 注册
-export function register(data: IAccount) {
+export function register(data: IAccount): Promise<IDataModel> {
   return Request.request({
     url: User.USER,
     method: 'post',

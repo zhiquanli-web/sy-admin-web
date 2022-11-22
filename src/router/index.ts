@@ -53,6 +53,7 @@ const router = createRouter({
   routes
 });
 
+const whiteList = ['/login', '/register'];
 router.beforeEach((to, from, next) => {
   NProgress.start();
   const token = localCache.getCache(tokenKey);
@@ -67,7 +68,7 @@ router.beforeEach((to, from, next) => {
       next();
     }
   } else {
-    if (!isToLogin) {
+    if (!whiteList.includes(to.path)) {
       next({ path: '/login' });
     } else {
       next();
