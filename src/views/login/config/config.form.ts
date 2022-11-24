@@ -48,7 +48,7 @@ export const loginFormConfig: IFormConfig = {
       size: 'large',
       rules: [
         { required: true, message: '请输入用户密码' },
-        { min: 6, max: 12, message: '用户名长度为6-12位字符' }
+        { min: 6, max: 12, message: '用户密码长度为6-12位字符' }
       ]
     }
   ]

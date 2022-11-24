@@ -38,7 +38,7 @@ export function login(data: IAccount) {
 // 获取用户信息
 export function getUserInfo() {
   return Request.get({
-    url: User.USER
+    url: User.USER_OWN
   });
 }
 

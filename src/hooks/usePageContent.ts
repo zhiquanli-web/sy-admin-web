@@ -45,7 +45,7 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
    */
   const getPageData = async (query?: any) => {
     query = query ?? {};
-    let params: unknown = {
+    let params: Record<string, any> = {
       ...pageQuery,
       pageNo: pageInfo.currentPage,
       pageSize: pageInfo.pageSize,
@@ -56,6 +56,11 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
         ...pageQuery,
         ...query
       };
+    }
+    for (const key in params) {
+      if (params[key] !== 0 && params[key] !== false && !params[key]) {
+        delete params[key];
+      }
     }
     try {
       const res = await Request.get<IDataModel<ITableList>>({
@@ -82,12 +87,14 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
   // 编辑
   const handleEdit = async (data: any, id: string | number, curUrl?: string) => {
     try {
-      await Request.put<IDataModel>({
-        url: curUrl || `${url}?id=${id}`,
+      const { code } = await await Request.put<IDataModel>({
+        url: curUrl || `${url}/${id}`,
         data
       });
-      success('操作成功');
-      refresh();
+      if (code === 0) {
+        success('操作成功');
+      }
+      getPageData();
     } catch (err) {
       // console.log(err);
     }
@@ -95,18 +102,20 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
   // 新增
   const handleCreate = async (data: any) => {
     try {
-      await Request.post<IDataModel>({
+      const { code } = await Request.post<IDataModel>({
         url,
         data
       });
-      success('添加成功');
-      refresh();
+      if (code === 0) {
+        success('添加成功');
+      }
+      getPageData();
     } catch (err) {
       // console.log(err);
     }
   };
   // 删除
-  const handleDelete = (row: any, contentTip?: string) => {
+  const handleDelete = (id: string, contentTip?: string) => {
     confirm({
       title: '删除',
       content: contentTip || '删除之后无法恢复哦，确定删除吗?',
@@ -114,10 +123,12 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
     })
       .then(async () => {
         try {
-          await Request.delete({
-            url: `${url}?id=${row.id}`
+          const { code } = await Request.delete({
+            url: `${url}/${id}`
           });
-          success('删除成功');
+          if (code === 0) {
+            success('删除成功');
+          }
         } catch (err) {
           // console.log(err);
         }
@@ -128,7 +139,6 @@ export default function usePageContent(config: ITableConfig, pageQuery: any = {}
   // 刷新数据
   const refresh = () => {
     pageInfo.currentPage = 1;
-    getPageData();
   };
   return {
     pageInfo,

@@ -18,8 +18,8 @@ const Request = new IRequest({
       }
       return config;
     },
-    responseInterceptor: (res) => {
-      if (res.data.code === 1001) {
+    responseInterceptorCatch: (res) => {
+      if (res.response.data.code === 1001) {
         const { error } = useMessage();
         error('登录超时，请重新登录');
         localCache.clearCache();
@@ -31,12 +31,10 @@ const Request = new IRequest({
         timer = setTimeout(() => {
           window.location.reload();
         }, 2000);
+      } else {
+        const { error } = useMessage();
+        error(res.response.data.data || '请求错误');
       }
-      return res;
-    },
-    responseInterceptorCatch: (res) => {
-      const { error } = useMessage();
-      error(res.response.data.data || '请求错误');
       return res;
     }
   }

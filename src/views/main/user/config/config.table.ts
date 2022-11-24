@@ -1,12 +1,7 @@
 import { ITableConfig } from '@/baseUI/syTable/types';
 import { ContentApis } from '@/service/api';
 export const tableConfig: ITableConfig = {
-  url: ContentApis.USER_LIST,
-  options: {
-    border: true,
-    stripe: true,
-    defaultSort: { prop: 'age', order: 'descending' }
-  },
+  url: ContentApis.USER,
   columns: [
     {
       type: 'index',
@@ -27,7 +22,7 @@ export const tableConfig: ITableConfig = {
     },
     {
       label: '创建时间',
-      prop: 'createAr',
+      prop: 'createAt',
       align: 'center'
     },
     {
@@ -42,5 +37,6 @@ export const tableConfig: ITableConfig = {
     }
   ],
   showFooter: true,
-  handlerOption: { showCreated: true, showCulomnIcon: true, showSizeIcon: true }
+  handlerOption: { showCreated: true, showSizeIcon: true, showCulomnIcon: true },
+  filterSlotNames: ['updateAt', 'createAt']
 };

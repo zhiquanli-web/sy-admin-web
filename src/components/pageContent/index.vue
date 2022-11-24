@@ -36,12 +36,15 @@
       @current-change="currentChange"
       @size-change="sizeChange"
     >
-      <template #createTime="scope">
-        {{ $filters.formatTime(scope.row.createTime) }}
+      <template #createAt="scope">
+        {{ $filters.formatTime(scope.row.createAt) }}
+      </template>
+      <template #updateAt="scope">
+        {{ $filters.formatTime(scope.row.updateAt) }}
       </template>
       <template #handler="scope">
         <el-button type="primary" link @click="emit('handleEdit', scope.row)">编辑</el-button>
-        <el-button type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+        <el-button type="danger" link @click="handleDelete(scope.row.id)">删除</el-button>
       </template>
       <!-- header 插槽 -->
       <template
