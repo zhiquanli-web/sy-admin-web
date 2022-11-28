@@ -14,7 +14,7 @@
           </slot>
         </template>
         <template #default="scope" v-if="!['index', 'selection'].includes(column.prop)">
-          <slot :name="column.prop" :row="scope.row">
+          <slot :name="column.prop" :row="{ ...scope.row, index }">
             <span>{{ scope.row[column.prop] }}</span>
           </slot>
         </template>

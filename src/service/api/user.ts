@@ -42,6 +42,14 @@ export function getUserInfo() {
   });
 }
 
+// 上传头像
+export function uploadAvatar(data: unknown) {
+  return Request.post({
+    url: User.UPLOAD_AVATAR,
+    data
+  });
+}
+
 export function getUserMenu() {
   return Request.get({
     url: User.USEMENU

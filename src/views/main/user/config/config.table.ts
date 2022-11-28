@@ -1,6 +1,6 @@
-import { ITableConfig } from '@/baseUI/syTable/types';
+import { IColumn, ITableConfig } from '@/baseUI/syTable/types';
 import { ContentApis } from '@/service/api';
-export const tableConfig: ITableConfig = {
+export const tableConfig: ITableConfig<IColumn> = {
   url: ContentApis.USER,
   columns: [
     {

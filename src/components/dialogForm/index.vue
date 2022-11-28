@@ -17,7 +17,10 @@
         <slot name="footer" />
       </template>
       <template v-for="item in customSlotes" :key="item.field" #[item.field]="scope">
-        <slot :name="item.field" :row="scope.row"></slot>
+        <slot
+          :name="item.field"
+          :row="Object.assign(scope.row, { [item.field]: formState[item.field] })"
+        ></slot>
       </template>
     </SyForm>
   </SyDialog>
@@ -40,7 +43,7 @@ const loading = ref(false);
 const visible = ref(false);
 const syDialogRef = ref();
 const syFormRef = ref();
-const formState = ref<any>({});
+const formState = ref<Record<string, any>>({});
 // custom 插槽
 const customSlotes = props.formConfig.formItems.filter((item) => {
   return item.type === 'custom';
@@ -49,7 +52,7 @@ watchEffect(() => {
   visible.value = props.modelValue;
 });
 watchEffect(() => {
-  formState.value = toRaw(props.row);
+  formState.value = toRaw(props.row) as Record<string, any>;
 });
 watch(visible, () => {
   emit('update:modelValue', visible.value);

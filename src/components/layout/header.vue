@@ -7,7 +7,8 @@
     </div>
     <el-dropdown class="flex items-center right-action-info" @command="handleCommand">
       <span class="flex items-center cursor">
-        <el-avatar icon="UserFilled" :size="34" />
+        <el-avatar v-if="!userInfo.avatar" icon="UserFilled" :size="34" />
+        <el-avatar v-else :src="userInfo.avatar" class="avatar-item" :size="34" />
         <span class="ml-10px c-#000">{{ userInfo.username }}</span>
       </span>
       <template #dropdown>
@@ -54,5 +55,8 @@ const changeCollapse = () => {
 }
 .right-action-info {
   flex: 0 0 120px;
+}
+.avatar-item {
+  background-color: #fff !important;
 }
 </style>

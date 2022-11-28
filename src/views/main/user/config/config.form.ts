@@ -8,12 +8,16 @@ export const queryFormConfig: IFormConfig = {
       field: 'username',
       placeholder: '请输入用户名'
     }
-  ],
-  customProps: 'searchBtn'
+  ]
 };
 
 export const formConfig: IFormConfig = {
   formItems: [
+    {
+      label: '头像',
+      type: 'custom',
+      field: 'avatar'
+    },
     {
       label: '用户名',
       type: 'input',

@@ -13,8 +13,8 @@
     <slot></slot>
     <template #footer v-if="showFooter">
       <span class="dialog-footer">
-        <el-button :loading="loading" type="primary" @click="emit('onConfirm')">确定</el-button>
         <el-button :disabled="loading" @click="onClose">取消</el-button>
+        <el-button :loading="loading" type="primary" @click="emit('onConfirm')">确定</el-button>
       </span>
     </template>
   </el-dialog>

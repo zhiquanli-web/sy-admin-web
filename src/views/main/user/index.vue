@@ -22,6 +22,19 @@
       :page-query="curQuery"
       ref="pageContentRef"
     >
+      <template #avatar="scope">
+        <el-image
+          :src="scope.row.avatar"
+          style="width: 60px; height: 60px; line-height: 60px"
+          fit="cover"
+          :preview-teleported="true"
+          :preview-src-list="[scope.row.avatar]"
+        >
+          <template #placeholder>
+            <el-avatar icon="UserFilled" :size="34" />
+          </template>
+        </el-image>
+      </template>
     </pageContent>
   </div>
   <DialogForm
@@ -33,10 +46,39 @@
     @on-close="onClose"
     ref="dialogFormRef"
   >
+    <template #avatar="scope">
+      <el-upload
+        class="avatar-uploader"
+        :show-file-list="false"
+        accept="jpeg,jpg,png"
+        list-type="picture"
+        v-model:file-list="fileList"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :on-change="handleChange"
+        :auto-upload="false"
+        ref="uploadRef"
+      >
+        <img
+          v-if="fileList.length > 0 || scope.row.avatar"
+          :src="fileList.length > 0 ? fileList[0].url : scope.row.avatar"
+          class="avatar"
+        />
+        <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+      </el-upload>
+    </template>
   </DialogForm>
 </template>
 
 <script setup lang="ts" name="user">
+import {
+  genFileId,
+  UploadInstance,
+  UploadProps,
+  UploadRawFile,
+  UploadUserFile
+} from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
 import { SyCard, SyForm } from '@/baseUI';
 import pageContent from '@/components/pageContent/index.vue';
 import DialogForm from '@/components/dialogForm/index.vue';
@@ -44,6 +86,10 @@ import { queryFormConfig, formConfig } from './config/config.form';
 import { tableConfig } from './config/config.table';
 import { IDialog } from '@/common/types';
 import { IRow } from './config/types';
+import { useMessage } from '@/hooks';
+import { uploadAvatar } from '@/service/api/user';
+
+const { error } = useMessage();
 
 const searchRef = ref();
 const pageContentRef = ref();
@@ -66,23 +112,60 @@ const handleEdit = (row: IRow) => {
     dialogParams.type = 'create';
   } else {
     dialogParams.type = 'edit';
-    dialogParams.row = row;
+    const { id, password, avatar, username } = row;
+    dialogParams.row = {
+      id,
+      password,
+      avatar,
+      username
+    };
   }
   dialogParams.show = true;
 };
 const onSubmit = async (data: IRow) => {
-  const params = Object.assign({}, data);
+  const params: IRow = Object.assign({}, data);
+  if (fileList.value.length > 0) {
+    const formData = new FormData();
+    formData.append('userId', params.id as string);
+    formData.append('avatar', fileList.value[0].raw as Blob);
+    try {
+      await uploadAvatar(formData);
+    } catch (err) {
+      error('头像上传失败');
+    }
+  }
   if (dialogParams.type === 'create') {
     await pageContentRef.value.handleCreate(params);
   } else {
     delete params.id;
+    delete params.avatar;
     await pageContentRef.value.handleEdit(params, data.id);
   }
   dialogFormRef.value.closeModal();
 };
 const onClose = () => {
+  fileList.value = [];
   dialogParams.row = {};
   dialogParams.type = 'create';
+};
+const uploadRef = ref<UploadInstance>();
+const fileList = ref<UploadUserFile[]>([]);
+const handleChange: UploadProps['onChange'] = (uploadFile) => {
+  const fileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  const fileSize = (uploadFile as Record<string, any>).raw.size / 1024 / 1024;
+  if (!fileTypes.includes((uploadFile as Record<string, any>).raw.type)) {
+    error('头像必须为 JPG/JPEG/PNG 格式!');
+    fileList.value = [];
+  } else if (fileSize > 2) {
+    error('头像大小不能超过2MB！');
+    fileList.value = [];
+  }
+};
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  uploadRef.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  uploadRef.value!.handleStart(file);
 };
 </script>
 
@@ -98,5 +181,39 @@ const onClose = () => {
   .el-form-item {
     margin-right: 14px;
   }
+}
+:deep(.el-image) {
+  .el-image__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.avatar-uploader .avatar {
+  width: 60px;
+  height: 60px;
+  display: block;
+}
+</style>
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 60px;
+  height: 60px;
+  text-align: center;
 }
 </style>
