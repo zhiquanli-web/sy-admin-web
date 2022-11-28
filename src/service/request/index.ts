@@ -69,7 +69,6 @@ class IRequest {
     });
   }
   post<T = IDataModel>(config: RequestConfig<T>): Promise<T> {
-    console.log('config', config);
     return this.request<T>({
       ...config,
       method: 'POST'

@@ -24,7 +24,7 @@
     >
       <template #avatar="scope">
         <el-image
-          :src="scope.row.avatar"
+          :src="scope.row.avatar ? `${scope.row.avatar}?time=${Date.now()}` : null"
           style="width: 60px; height: 60px; line-height: 60px"
           fit="cover"
           :preview-teleported="true"
@@ -47,25 +47,7 @@
     ref="dialogFormRef"
   >
     <template #avatar="scope">
-      <el-upload
-        class="avatar-uploader"
-        :show-file-list="false"
-        accept="jpeg,jpg,png"
-        list-type="picture"
-        v-model:file-list="fileList"
-        :limit="1"
-        :on-exceed="handleExceed"
-        :on-change="handleChange"
-        :auto-upload="false"
-        ref="uploadRef"
-      >
-        <img
-          v-if="fileList.length > 0 || scope.row.avatar"
-          :src="fileList.length > 0 ? fileList[0].url : scope.row.avatar"
-          class="avatar"
-        />
-        <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-      </el-upload>
+      <UploadAvatar v-model="fileList" :url="scope.row.avatar" />
     </template>
   </DialogForm>
 </template>
@@ -78,10 +60,10 @@ import {
   UploadRawFile,
   UploadUserFile
 } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
 import { SyCard, SyForm } from '@/baseUI';
 import pageContent from '@/components/pageContent/index.vue';
 import DialogForm from '@/components/dialogForm/index.vue';
+import UploadAvatar from '@/components/uploadAvatar/index.vue';
 import { queryFormConfig, formConfig } from './config/config.form';
 import { tableConfig } from './config/config.table';
 import { IDialog } from '@/common/types';
@@ -94,6 +76,7 @@ const { error } = useMessage();
 const searchRef = ref();
 const pageContentRef = ref();
 const dialogFormRef = ref();
+const fileList = ref<UploadUserFile[]>([]);
 const searchForm = ref({
   username: ''
 });
@@ -147,25 +130,6 @@ const onClose = () => {
   fileList.value = [];
   dialogParams.row = {};
   dialogParams.type = 'create';
-};
-const uploadRef = ref<UploadInstance>();
-const fileList = ref<UploadUserFile[]>([]);
-const handleChange: UploadProps['onChange'] = (uploadFile) => {
-  const fileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-  const fileSize = (uploadFile as Record<string, any>).raw.size / 1024 / 1024;
-  if (!fileTypes.includes((uploadFile as Record<string, any>).raw.type)) {
-    error('头像必须为 JPG/JPEG/PNG 格式!');
-    fileList.value = [];
-  } else if (fileSize > 2) {
-    error('头像大小不能超过2MB！');
-    fileList.value = [];
-  }
-};
-const handleExceed: UploadProps['onExceed'] = (files) => {
-  uploadRef.value!.clearFiles();
-  const file = files[0] as UploadRawFile;
-  file.uid = genFileId();
-  uploadRef.value!.handleStart(file);
 };
 </script>
 
